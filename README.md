@@ -1,20 +1,19 @@
-# BACE1 · GC4 (D3R) — Predicción de afinidad con kNN sobre matrices de distancia de MEP
+# Caracterización y clasificación de ligandos inhibidores beta-secretasa 1 basados en el Potencial Electrostático Molecular 
+
 
 Clasificación y regresión de afinidad de ligandos de la proteasa **BACE1** (Beta-secretasa 1,
-diana terapéutica en Alzheimer), usando **K-Nearest Neighbors** sobre **matrices de distancia**
+diana terapéutica en Alzheimer), usando **K-Nearest Neighbors** y **K-Nearest Centroid** sobre **matrices de distancia**
 construidas a partir de árboles/descriptores del **Potencial Electrostático Molecular (MEP)**
 de cada molécula, en distintas combinaciones de su componente positiva y negativa.
 
-Trabajo realizado en el semillero de **Química Teórica** de la Universidad Nacional de
-Colombia (UNAL), como aporte al **Grand Challenge 4 (GC4) — BACE** del D3R
+Trabajo realizado en el **Grupo de Química Teórica** de la Universidad Nacional de
+Colombia (UNAL), como proyecto de investigación tomado del **Grand Challenge 4 (GC4) — BACE** del D3R
 (Drug Design Data Resource): <https://drugdesigndata.org/about/grand-challenge-4/bace>.
 
 ## Objetivo
 
-1. Usar la matriz de distancias derivada del MEP para **clasificar y encontrar patrones**
-   entre moléculas con afinidad experimental conocida.
-2. **Predecir la afinidad** de 20 moléculas de pose del GC4 que no cuentan con dato
-   experimental, como aporte a uno de los objetivos del reto GC4 BACE1.
+1. Proponer y/o explorar herramientas alternativas para la caracterización y clasificación de los ligandos inhibidores BACE1 del GC4, así cómo la predicción de afinidades de unión de los mismos mediante la cuantificación de la similitud topológica, utilizando representaciones en forma de árboles de potencial electrostático molecular. 
+2. Proponer valores de afinidad de unión para el conjunto de los ligandos inhibidores BACE1 cuya afinidad constituye el reto.
 
 ## Datos
 
@@ -82,32 +81,12 @@ Para cada una de las 5 matrices de distancia:
 6. *(Notebook 01)* **Dendrogramas coloreados** por categoría de afinidad, para inspeccionar
    visualmente agrupaciones/patrones en el espacio de distancias de MEP.
 
-## Correcciones realizadas sobre la versión original de los notebooks
-
-- **Identificadores duplicados**: la limpieza original de etiquetas colapsaba las 20
-  moléculas de pose (`xyz_newmol0`...`xyz_newmol19`) a un único label duplicado `"xyz"`,
-  lo que rompía la indexación por `.loc[]`. Se corrigió para conservar identificadores
-  únicos.
-- **Categorías de afinidad con huecos**: los rangos de `get_affinity_color` no eran
-  contiguos entre categorías vecinas; se cerraron los huecos para evitar una sexta clase
-  "por defecto" no documentada.
-- **`ID_real` no coincidía en formato** con lo que el resto del código esperaba
-  (`"molN"` vs. entero plano); se añadió una normalización explícita.
-- Se **removieron celdas duplicadas** (método del codo repetido dos veces).
-- Se **evitó recalcular** el `train_test_split` en cada iteración del barrido de K
-  (mismo resultado, cómputo redundante).
-- Se **añadieron** las gráficas de dendrograma que usan las funciones de coloreado
-  jerárquico, definidas en el notebook original pero nunca invocadas.
-- Se **eliminó la dependencia obligatoria de Google Drive**: los notebooks ahora leen por
-  defecto desde `data/` dentro del repo, con una bandera para montar Drive si se prefiere.
-
 ## Resultados
 
-Ambos notebooks fueron **ejecutados de punta a punta contra los datos reales**, sin
-errores, con todas las verificaciones de integridad correctas (173 IDs únicos, 153
-moléculas válidas + 20 desconocidas, `mol116` confirmado ausente de las matrices).
+Ambos notebooks fueron ejecutados con todas las verificaciones de integridad correctas (173 IDs únicos, 153
+moléculas válidas + 20 desconocidas, sin `mol116` en las matrices).
 
-**Resumen honesto del desempeño** (detalle completo en [`results/RESULTS.md`](./results/RESULTS.md)):
+**Resumen del desempeño** (detalle completo en [`results/RESULTS.md`](./results/RESULTS.md)):
 
 - **Clasificación**: accuracy entre 0.24–0.41 según la matriz y K, apenas en el rango del
   baseline de clase mayoritaria (0.294). La mejor combinación observada es `Mixed 50-50`
@@ -123,9 +102,6 @@ moléculas válidas + 20 desconocidas, `mol116` confirmado ausente de las matric
   como una primera aproximación, no como resultado final — ver recomendaciones en
   `results/RESULTS.md`.
 
-Este desempeño limitado de la línea base de kNN es precisamente lo que motiva la fase de
-transfer learning descrita más abajo.
-
 ## Uso
 
 ```bash
@@ -138,18 +114,12 @@ jupyter notebook notebooks/01_KNN_clasificacion_regresion.ipynb
 O ábrelos directamente en Google Colab, activando `USAR_DRIVE = True` y ajustando `RUTA_BASE`
 si tus matrices de distancia están en Drive.
 
-## Próximos pasos
-
-Se está explorando una fase de **transfer learning** usando la matriz de distancias y los
-árboles de MEP como entrada de una GCNN preentrenada (p. ej. DeepBindGCN) para la predicción
-de interacción proteína–ligando, buscando mejorar sobre la línea base de kNN sin incurrir en
-sobreajuste. Este trabajo se documentará en una rama o repositorio aparte una vez esté listo.
 
 ## Licencia
 
 Este proyecto está bajo licencia MIT — ver [`LICENSE`](./LICENSE).
 
 ## Créditos
-
-Semillero de Química Teórica, Universidad Nacional de Colombia (UNAL).
+Omar Landinez & Edgar Eduardo Daza Caicedo
+Grupo de Química Teórica, Universidad Nacional de Colombia (UNAL). 
 Datos del reto GC4 BACE1: [D3R Grand Challenge 4](https://drugdesigndata.org/about/grand-challenge-4/bace).
