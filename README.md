@@ -61,9 +61,8 @@ leerlos desde tu Google Drive si trabajas en Colab.
 └── README.md
 ```
 
-> Las matrices de distancia (`data/distance_matrix_neg`, etc.) sí están incluidas en este
-> repositorio: son livianas (150–750 KB cada una) y son indispensables para reproducir los
-> resultados sin depender de Google Drive.
+> Las matrices de distancia (`data/distance_matrix_neg`, etc.) no están incluidas en este repositorio
+
 
 ## Metodología
 
@@ -120,6 +119,6 @@ si tus matrices de distancia están en Drive.
 Este proyecto está bajo licencia MIT — ver [`LICENSE`](./LICENSE).
 
 ## Créditos
-Omar Landinez & Edgar Eduardo Daza Caicedo
+Omar Landinez & Edgar Eduardo Daza Caicedo • 2026
 Grupo de Química Teórica, Universidad Nacional de Colombia (UNAL). 
 Datos del reto GC4 BACE1: [D3R Grand Challenge 4](https://drugdesigndata.org/about/grand-challenge-4/bace).
