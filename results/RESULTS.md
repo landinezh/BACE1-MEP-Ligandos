@@ -5,21 +5,6 @@ y `02_kNC_clasificacion_regresion_modular.ipynb`) contra los datos reales:
 153 moléculas conocidas (`mol0`–`mol153`, sin `mol116`) y 20 moléculas de pose del GC4
 (`xyz_newmol0`–`xyz_newmol19`), sobre las 5 matrices de distancia derivadas del MEP.
 
-## 1. Verificaciones de integridad (antes de mirar resultados)
-
-Todas pasaron correctamente sobre los datos reales:
-
-- **173 identificadores únicos** tras la limpieza de etiquetas (antes del fix, las 20
-  moléculas de pose colapsaban a un solo `"xyz"` duplicado).
-- **153 moléculas válidas** (con distancia y afinidad) + **20 desconocidas** — coincide
-  exactamente con lo esperado.
-- **`mol116` confirmado ausente** de las 5 matrices de distancia (su geometría cargada
-  impedía calcular el MEP), tal como se esperaba.
-- El orden de columnas/filas es **idéntico entre las 5 matrices** (verificado
-  comparando encabezados de `distance_matrix_neg` y `distance_matrix_pos_col` tras quitar
-  sufijos `_neg` / `_pos_col`).
-- Los dos notebooks ejecutan de punta a punta **sin errores** (`jupyter nbconvert --execute`).
-
 ## 2. Clasificación — barrido de K (notebook 01, K=1..20)
 
 Accuracy sobre el conjunto de prueba (30%), con reporte detallado en K=3. Como referencia,
@@ -36,7 +21,7 @@ predecir siempre la clase mayoritaria ("Rojo Vino", 45/153 moléculas) da **accu
 Ver `figuras/elbow_accuracy_todas_matrices.png` y las matrices de confusión individuales
 (`figuras/confusion_matrix_*.png`).
 
-**Lectura honesta:** ninguna matriz supera de forma consistente y clara al baseline de
+Ninguna matriz supera de forma consistente y clara al baseline de
 clase mayoritaria (0.294). La mejor combinación observada es **Mixed 50-50 con K=15**
 (accuracy=0.413), pero la mayoría de configuraciones se mueven en un rango de 0.24–0.37,
 muy cerca del azar ponderado por clase. Las matrices de confusión muestran confusión
@@ -55,7 +40,7 @@ MSE y R² sobre el conjunto de prueba (30%), reporte detallado en K=3.
 | Mixed 30-70 | 3.49 | -0.06 | -0.06 | K=3 |
 | Mixed 70-30 | 10.95 | -2.32 | -0.49 | K=10 |
 
-**Lectura honesta: el R² es negativo en absolutamente todas las combinaciones evaluadas**
+El R² es negativo en absolutamente todas las combinaciones evaluadas**
 (incluso en su mejor K), lo que significa que el modelo kNN de regresión, sobre esta
 matriz de distancias, predice peor que simplemente devolver el promedio de afinidad del
 conjunto de entrenamiento. `Mixed 30-70` es la menos mala (R²=-0.06, casi neutra), y
@@ -83,7 +68,7 @@ accuracy razonable), y `Negative Distance` es la más inestable.
 conocidas, coloreado por categoría de afinidad. En las 5 matrices, la gran mayoría de
 ramas quedan en **gris** (clústeres con mezcla de categorías), con solo unos pocos
 sub-clústeres pequeños y puros (2-3 hojas) del mismo color. Esto es consistente con la
-clasificación débil: **la estructura geométrica de la matriz de distancias de MEP no separa
+clasificación débil: **La matriz de distancias de MEP no separa
 limpiamente las categorías de afinidad** tal como están definidas actualmente.
 
 ## 6. Predicciones para las 20 moléculas de pose del GC4
@@ -94,19 +79,12 @@ equivalentes `knc_predicciones_*_K5_*.csv` (notebook 02, K=5).
 
 **Importante:** dado el desempeño débil de validación de la sección 2-4 (accuracy cercana
 al baseline, R² negativo), estas predicciones deben tratarse como **una primera
-aproximación, no como resultados confiables para tomar decisiones**. Antes de reportarlas
-como aporte al GC4, conviene:
-- Compararlas entre las 5 matrices y quedarse solo con las moléculas donde haya consenso.
-- Priorizar `Mixed 30-70` (la matriz más estable en ambas validaciones) como referencia.
-- Considerar la fase de transfer learning con DeepBindGCN (ver README) como intento de
-  mejorar sobre esta línea base antes de publicar valores finales de afinidad.
+aproximación, no como resultados confiables para tomar decisiones**. 
 
 ## Conclusión
 
 El pipeline de kNN/kNC sobre las matrices de distancia de MEP, tal como está planteado
 (bins de color fijos + kNN con distancia precomputada), **funciona correctamente a nivel
-de código** (todas las verificaciones de integridad pasan, ambos notebooks corren sin
-errores) pero **su poder predictivo es limitado**: la clasificación apenas iguala o supera
+de código** pero **su poder predictivo es limitado**: la clasificación apenas iguala o supera
 el baseline de clase mayoritaria, y la regresión no logra superar la media como predictor
-en ninguna configuración. Esto documenta objetivamente el punto de partida y motiva la
-fase de transfer learning con una GCNN preentrenada (DeepBindGCN) como siguiente paso.
+en ninguna configuración. 
