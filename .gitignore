@@ -1,0 +1,5 @@
+# Entornos y cachés de Python/Jupyter
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+*.pyc
